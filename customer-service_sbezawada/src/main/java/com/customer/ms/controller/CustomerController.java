@@ -14,12 +14,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.customer.ms.dao.CustomerDAO;
 import com.customer.ms.model.Customer;
+import com.customer.ms.model.CustomerM;
+import com.customer.ms.service.CustomerService;
 
 @RestController
 public class CustomerController {
 	
 	@Autowired
 	private CustomerDAO customerDAO;
+	
+	@Autowired
+	private CustomerService customerService;
 	
 	// URL - http://localhost:8080/hello
 	@RequestMapping("/hello")
@@ -54,10 +59,36 @@ public class CustomerController {
 
  
 
-    // URL - DELETE http://localhost:8080/customer/{cusId}
+    // URL - DELETE http://localhost:8080/customer/{cusId} - deleteCustomer
     @RequestMapping(value = "/customer/{cusId}", method = RequestMethod.DELETE)
     public void deleteCustomer(@PathVariable("cusId") String cusId) {
         customerDAO.deleteCustomer(cusId);
     }
 	
+    @RequestMapping(value= "/mongoCustomers", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
+    public List<CustomerM> getMongoCustomers(){
+        List<CustomerM> list = customerService.findAll();
+        return list;
+    }
+    
+    @RequestMapping(value= "/mongoCustomer/{cusId}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
+    public CustomerM getMongoCustomer(@PathVariable("cusId") String cusId){
+        return customerService.findById(cusId);
+    }
+    
+    @RequestMapping(value = "/mongoCustomer", method = RequestMethod.POST , produces = {MediaType.APPLICATION_JSON_VALUE})
+    public CustomerM addMongoCustomer(@RequestBody CustomerM customer){
+        return customerService.addCustomer(customer);
+    }
+    
+    @RequestMapping(value = "/mongoCustomer/{cusId}", method = RequestMethod.DELETE )
+    public String deleteMongoCustomer(@PathVariable("cusId") String cusId) {
+        return customerService.deleteCustomer(cusId);
+    }  
+    
+    @RequestMapping(value = "/mongoCustomeru", method = RequestMethod.POST , produces = {MediaType.APPLICATION_JSON_VALUE})
+    public CustomerM updateMongoCustomer(@RequestBody CustomerM customer){
+        return customerService.updateCustomer(customer);
+    }
+    
 }
